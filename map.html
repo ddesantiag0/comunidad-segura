@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mapa de Actividad ICE | Comunidad Segura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+
+    .leaflet-popup-content {
+      font-size: 16px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <script>
+    const db = firebase.firestore();
+
+    // Create the map and center it on Los Angeles
+    const map = L.map('map').setView([34.0522, -118.2437], 11); // LA coords
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Fetch all ICE reports
+    db.collection("iceReports").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const type = data.type || "Actividad desconocida";
+        const address = data.location || "Sin dirección";
+        const notes = data.notes || "";
+        const time = data.timeSeen || "";
+
+        // TEMP: Fake coordinates around LA (until we add geocoding)
+        const lat = 34.05 + Math.random() * 0.05;
+        const lng = -118.25 + Math.random() * 0.05;
+
+        const popupContent = `
+          <strong>🚨 ${type}</strong><br>
+          <em>${address}</em><br>
+          🕒 ${time}<br>
+          ${notes ? "📄 " + notes : ""}
+        `;
+
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(popupContent);
+      });
+    });
+  </script>
+
+</body>
+</html>
