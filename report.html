@@ -11,7 +11,7 @@
   <script src="firebase-config.js"></script>
 
   <!-- Language Script -->
-  <script src="scripts/lang.js"></script>
+  <script defer src="scripts/lang.js"></script>
 
   <style>
     body {
@@ -20,7 +20,6 @@
       max-width: 600px;
       margin: auto;
     }
-
     input, select, button, textarea {
       display: block;
       width: 100%;
@@ -28,7 +27,6 @@
       padding: 0.6em;
       font-size: 1em;
     }
-
     .back-btn {
       position: fixed;
       top: 15px;
@@ -42,7 +40,6 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       z-index: 9999;
     }
-
     .emergency-button {
       position: fixed;
       bottom: 20px;
@@ -70,10 +67,10 @@
     <label id="labelType"></label>
     <select id="activityType" required>
       <option value="" id="optSelect"></option>
-      <option value="Patrulla">Patrulla</option>
-      <option value="Punto de control">Punto de control</option>
-      <option value="Redada">Redada</option>
-      <option value="Otra">Otra</option>
+      <option value="patrol"></option>
+      <option value="checkpoint"></option>
+      <option value="raid"></option>
+      <option value="other"></option>
     </select>
 
     <label id="labelTime"></label>
@@ -86,26 +83,43 @@
   </form>
 
   <p id="thanksMessage" style="display:none; color: green;"></p>
-
   <button class="emergency-button" onclick="triggerEmergency()">⚠️</button>
 
   <script>
-    const db = firebase.firestore();
-
     document.addEventListener("DOMContentLoaded", () => {
       translatePage("report");
 
+      const db = firebase.firestore();
       const form = document.getElementById("iceReportForm");
       const lang = getLang();
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        const locationInput = document.getElementById("location").value;
+        const type = document.getElementById("activityType").value;
+        const timeSeen = document.getElementById("timeSeen").value;
+        const notes = document.getElementById("notes").value;
+
+        let lat = null;
+        let lng = null;
+
+        if (locationInput) {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationInput)}`);
+          const geo = await res.json();
+          if (geo[0]) {
+            lat = parseFloat(geo[0].lat);
+            lng = parseFloat(geo[0].lon);
+          }
+        }
+
         const data = {
-          location: document.getElementById("location").value,
-          type: document.getElementById("activityType").value,
-          timeSeen: document.getElementById("timeSeen").value,
-          notes: document.getElementById("notes").value,
+          location: locationInput,
+          type,
+          timeSeen,
+          notes,
+          lat,
+          lng,
           timestamp: new Date().toISOString()
         };
 

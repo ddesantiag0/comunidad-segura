@@ -1,39 +1,36 @@
-<!-- Comunidad Segura Map Page - Version 1.2 -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <title>ICE Map | Comunidad Segura</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mapa de Reportes | Comunidad Segura</title>
-  
+
   <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  
+
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
-  <!-- Geocoding -->
-  <script src="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder/dist/esri-leaflet-geocoder.css" />
+  <!-- Language Logic -->
+  <script defer src="scripts/lang.js"></script>
 
   <style>
-    html, body, #map {
+    html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+    }
+    #map {
+      height: 100vh;
       width: 100%;
     }
-    .leaflet-popup-content {
-      font-size: 16px;
-      line-height: 1.4;
-    }
     .back-btn {
-      position: absolute;
+      position: fixed;
       top: 15px;
-      left: 60px; /* Moved right to not cover zoom controls */
+      left: 60px;
       background: white;
       padding: 6px 10px;
       font-size: 16px;
@@ -41,7 +38,7 @@
       text-decoration: none;
       color: #333;
       box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      z-index: 1001;
+      z-index: 9999;
     }
     .emergency-button {
       position: fixed;
@@ -60,62 +57,61 @@
   </style>
 </head>
 <body>
-  <a href="index.html" class="back-btn">⬅ Volver</a>
+  <a href="index.html" id="backButton" class="back-btn">←</a>
   <div id="map"></div>
   <button class="emergency-button" onclick="triggerEmergency()">⚠️</button>
 
   <script>
-    const db = firebase.firestore();
-    const urlParams = new URLSearchParams(window.location.search);
-    const lang = urlParams.get('lang') || 'es';
+    document.addEventListener("DOMContentLoaded", () => {
+      translatePage("map");
 
-    // Back button respects language
-    document.querySelector(".back-btn").href = `index.html?lang=${lang}`;
+      const lang = getLang();
+      const db = firebase.firestore();
 
-    // Init map
-    const map = L.map('map').setView([34.0522, -118.2437], 11);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    const geocode = async (address) => {
-      const url = `https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates?SingleLine=${encodeURIComponent(address)}&f=json`;
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        const loc = data.candidates[0]?.location;
-        return loc ? [loc.y, loc.x] : null;
-      } catch (err) {
-        console.error("Geocoding failed", err);
-        return null;
+      // Provide fallback if map translations are missing
+      if (!translations.map) {
+        translations.map = {
+          es: { unknown: "Desconocido", noAddress: "Sin dirección" },
+          en: { unknown: "Unknown", noAddress: "No address provided" }
+        };
       }
-    };
 
-    db.collection("iceReports").get().then(async (querySnapshot) => {
-      for (const doc of querySnapshot.docs) {
-        const data = doc.data();
-        const address = data.location || "Los Angeles, CA";
-        const notes = data.notes || "";
-        const time = data.timeSeen || "";
-        const type = data.type || "Actividad desconocida";
+      const t = translations.map[lang] || translations.map["es"];
 
-        const coords = await geocode(address);
-        if (!coords) continue;
+      const map = L.map('map').setView([34.0522, -118.2437], 11);
 
-        const popupContent = `
-          <strong>🚨 ${type}</strong><br>
-          <em>${address}</em><br>
-          🕒 ${time}<br>
-          ${notes ? "📄 " + notes : ""}
-        `;
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
 
-        L.marker(coords).addTo(map).bindPopup(popupContent);
-      }
+      db.collection("iceReports").get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+
+            const lat = data.lat ?? 34.05 + Math.random() * 0.05;
+            const lng = data.lng ?? -118.25 + Math.random() * 0.05;
+            const type = data.type || t.unknown;
+            const address = data.location || t.noAddress;
+            const notes = data.notes || "";
+            const time = data.timeSeen || "";
+
+            const popup = `
+              <strong>🚨 ${type}</strong><br>
+              <em>${address}</em><br>
+              🕒 ${time}<br>
+              ${notes ? "📄 " + notes : ""}
+            `;
+
+            L.marker([lat, lng])
+              .addTo(map)
+              .bindPopup(popup);
+          });
+        })
+        .catch((err) => {
+          console.error("Error fetching reports:", err);
+        });
     });
-
-    function triggerEmergency() {
-      alert("🚨 EMERGENCIA: Contactando a tus contactos de emergencia y mostrando tus derechos legales...");
-    }
   </script>
 </body>
 </html>
