@@ -1,0 +1,165 @@
+<!-- Comunidad Segura Homepage - Enhanced Version -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comunidad Segura</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles/main.css" />
+  <style>
+    
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      background: #fefefe;
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      text-align: center;
+      font-size: 1.1rem;
+      max-width: 500px;
+    }
+    .btn {
+      display: block;
+      margin: 1rem auto;
+      padding: 1rem 2rem;
+      background: #ff3b3f;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 8px;
+      text-decoration: none;
+      max-width: 300px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: background 0.2s ease-in-out;
+    }
+    .btn:hover {
+      background: #d23235;
+    }
+    img {
+      max-width: 150px;
+      margin-bottom: 1rem;
+    }
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .language-selector {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+    }
+    .language-selector button {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      margin: 0 0.25rem;
+      cursor: pointer;
+    }
+    .emergency-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: red;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <div class="language-selector">
+    <button onclick="setLanguage('es')">ES</button>
+    <button onclick="setLanguage('en')">EN</button>
+    <button onclick="setLanguage('zh')">中文</button>
+    <button onclick="setLanguage('vi')">Tiếng Việt</button>
+    <button onclick="setLanguage('tl')">Tagalog</button>
+    <button onclick="setLanguage('ar')">العربية</button>
+  </div>
+
+  <img src="assets/logo.png" alt="Comunidad Segura Logo" />
+  <h1>Comunidad Segura</h1>
+  <p id="welcomeText">Una plataforma para reportar actividad de ICE, ver alertas en tiempo real, y acceder a recursos legales para nuestra comunidad inmigrante en Los Ángeles.</p>
+
+  <a href="report.html" class="btn" id="reportBtn">🚨 Reportar Actividad ICE</a>
+  <a href="map.html" class="btn" id="mapBtn">📍 Ver Mapa de Reportes</a>
+  <a href="docs/rights.pdf" class="btn" id="rightsBtn" target="_blank">🛡️ Conoce Tus Derechos (PDF)</a>
+
+  <footer class="footer">
+    Desarrollado por David De Santiago | Comunidad Segura © 2025
+  </footer>
+
+  <button class="emergency-button" onclick="triggerEmergency()">⚠️</button>
+
+  <script>
+    function setLanguage(lang) {
+      const texts = {
+        es: {
+          welcomeText: "Una plataforma para reportar actividad de ICE, ver alertas en tiempo real, y acceder a recursos legales para nuestra comunidad inmigrante en Los Ángeles.",
+          reportBtn: "🚨 Reportar Actividad ICE",
+          mapBtn: "📍 Ver Mapa de Reportes",
+          rightsBtn: "🛡️ Conoce Tus Derechos (PDF)"
+        },
+        en: {
+          welcomeText: "A platform to report ICE activity, view real-time alerts, and access legal resources for immigrant communities in Los Angeles.",
+          reportBtn: "🚨 Report ICE Activity",
+          mapBtn: "📍 View ICE Activity Map",
+          rightsBtn: "🛡️ Know Your Rights (PDF)"
+        },
+        zh: {
+          welcomeText: "一个用于报告 ICE 活动、查看实时报告和访问积极合法资源的平台。",
+          reportBtn: "🚨 报告 ICE 活动",
+          mapBtn: "📍 查看报告地图",
+          rightsBtn: "🛡️ 了解你的权利 (PDF)"
+        },
+        vi: {
+          welcomeText: "Nền tảng để báo cáo hoạt động ICE, xem cảnh báo theo thời gian thực và truy cập tài nguyên pháp lý cho cộng đồng nhập cư tại Los Angeles.",
+          reportBtn: "🚨 Báo cáo ICE",
+          mapBtn: "📍 Xem bản đồ cảnh báo",
+          rightsBtn: "🛡️ Biết quyền của bạn (PDF)"
+        },
+        tl: {
+          welcomeText: "Isang plataporma upang iulat ang aktibidad ng ICE, tingnan ang mga alerto, at ma-access ang legal na tulong para sa mga komunidad ng imigrante sa Los Angeles.",
+          reportBtn: "🚨 Iulat ang Aktibidad ng ICE",
+          mapBtn: "📍 Tingnan ang Mapa ng Aktibidad",
+          rightsBtn: "🛡️ Alamin ang Iyong Mga Karapatan (PDF)"
+        },
+        ar: {
+          welcomeText: "منصة للإبلاغ عن نشاط ICE، وعرض التنبيهات الفورية، والوصول إلى الموارد القانونية للمجتمعات المهاجرة في لوس أنجلوس.",
+          reportBtn: "🚨 الإبلاغ عن نشاط ICE",
+          mapBtn: "📍 عرض خريطة التنبيهات",
+          rightsBtn: "🛡️ اعرف حقوقك (PDF)"
+        }
+      };
+
+      const t = texts[lang];
+      if (t) {
+        document.getElementById("welcomeText").innerText = t.welcomeText;
+        document.getElementById("reportBtn").innerText = t.reportBtn;
+        document.getElementById("mapBtn").innerText = t.mapBtn;
+        document.getElementById("rightsBtn").innerText = t.rightsBtn;
+      }
+    }
+
+    function triggerEmergency() {
+      alert("🚨 EMERGENCIA: Contactando a tus contactos de emergencia y mostrando tus derechos legales...");
+      // Later: Trigger SMS, Email, show modal with rights, etc.
+    }
+  </script>
+</body>
+</html>

@@ -3,10 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reportar ICE | Comunidad Segura</title>
+  <title>Report ICE | Comunidad Segura</title>
+
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
+
+  <!-- Language Script -->
+  <script src="scripts/lang.js"></script>
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,6 +20,7 @@
       max-width: 600px;
       margin: auto;
     }
+
     input, select, button, textarea {
       display: block;
       width: 100%;
@@ -21,57 +28,97 @@
       padding: 0.6em;
       font-size: 1em;
     }
+
+    .back-btn {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: white;
+      padding: 6px 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #333;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      z-index: 9999;
+    }
+
+    .emergency-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: red;
+      color: white;
+      border: none;
+      padding: 1rem;
+      border-radius: 50%;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 9999;
+    }
   </style>
 </head>
 <body>
-  <h2>🚨 Reportar Actividad de ICE</h2>
-  <form id="iceReportForm">
-    <label>📍 Ubicación o dirección (opcional pero útil)</label>
-    <input type="text" id="location" placeholder="Ej: 123 Main St, Los Angeles, CA" />
+  <a id="backButton" href="index.html" class="back-btn"></a>
+  <h2 id="formTitle"></h2>
 
-    <label>⚠️ Tipo de actividad</label>
+  <form id="iceReportForm">
+    <label id="labelLocation"></label>
+    <input type="text" id="location" />
+
+    <label id="labelType"></label>
     <select id="activityType" required>
-      <option value="">Selecciona uno</option>
+      <option value="" id="optSelect"></option>
       <option value="Patrulla">Patrulla</option>
       <option value="Punto de control">Punto de control</option>
       <option value="Redada">Redada</option>
       <option value="Otra">Otra</option>
     </select>
 
-    <label>🕒 Hora aproximada (si sabes)</label>
-    <input type="text" id="timeSeen" placeholder="Ej: 10:30 AM, hoy" />
+    <label id="labelTime"></label>
+    <input type="text" id="timeSeen" />
 
-    <label>📄 Comentarios (opcional)</label>
-    <textarea id="notes" rows="4" placeholder="Describe lo que viste..."></textarea>
+    <label id="labelNotes"></label>
+    <textarea id="notes" rows="4"></textarea>
 
-    <button type="submit">Enviar Reporte</button>
+    <button type="submit" id="submitBtn"></button>
   </form>
 
-  <p id="thanksMessage" style="display:none; color: green;">✅ ¡Gracias! Tu reporte ha sido recibido.</p>
+  <p id="thanksMessage" style="display:none; color: green;"></p>
+
+  <button class="emergency-button" onclick="triggerEmergency()">⚠️</button>
 
   <script>
     const db = firebase.firestore();
-    const form = document.getElementById("iceReportForm");
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+    document.addEventListener("DOMContentLoaded", () => {
+      translatePage("report");
 
-      const data = {
-        location: document.getElementById("location").value,
-        type: document.getElementById("activityType").value,
-        timeSeen: document.getElementById("timeSeen").value,
-        notes: document.getElementById("notes").value,
-        timestamp: new Date().toISOString()
-      };
+      const form = document.getElementById("iceReportForm");
+      const lang = getLang();
 
-      try {
-        await db.collection("iceReports").add(data);
-        form.style.display = "none";
-        document.getElementById("thanksMessage").style.display = "block";
-      } catch (err) {
-        alert("Hubo un error. Intenta de nuevo.");
-        console.error(err);
-      }
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const data = {
+          location: document.getElementById("location").value,
+          type: document.getElementById("activityType").value,
+          timeSeen: document.getElementById("timeSeen").value,
+          notes: document.getElementById("notes").value,
+          timestamp: new Date().toISOString()
+        };
+
+        try {
+          await db.collection("iceReports").add(data);
+          form.style.display = "none";
+          document.getElementById("thanksMessage").textContent = translations["report"][lang]["thanks"];
+          document.getElementById("thanksMessage").style.display = "block";
+        } catch (err) {
+          alert("Error submitting report. Try again.");
+          console.error(err);
+        }
+      });
     });
   </script>
 </body>
