@@ -169,6 +169,63 @@ const translations = {
       backBtn: "← رجوع"
     }
   },
+settings: {
+  en: {
+    title: "Emergency Contacts",
+    instructions: "Add up to 3 emergency contacts to be notified in an emergency.",
+    nameLabel: "Name",
+    phoneLabel: "Phone Number",
+    saveBtn: "Save Contacts",
+    backBtn: "← Back",
+    saved: "✅ Contacts saved successfully."
+  },
+  es: {
+    title: "Contactos de Emergencia",
+    instructions: "Agrega hasta 3 contactos de emergencia para ser notificados en una emergencia.",
+    nameLabel: "Nombre",
+    phoneLabel: "Número de Teléfono",
+    saveBtn: "Guardar Contactos",
+    backBtn: "← Volver",
+    saved: "✅ Contactos guardados correctamente."
+  },
+  zh: {
+    title: "紧急联系人",
+    instructions: "添加最多 3 个紧急联系人以在紧急情况下通知他们。",
+    nameLabel: "姓名",
+    phoneLabel: "电话号码",
+    saveBtn: "保存联系人",
+    backBtn: "← 返回",
+    saved: "✅ 联系人已成功保存。"
+  },
+  vi: {
+    title: "Liên Hệ Khẩn Cấp",
+    instructions: "Thêm tối đa 3 liên hệ khẩn cấp để được thông báo trong trường hợp khẩn cấp.",
+    nameLabel: "Tên",
+    phoneLabel: "Số điện thoại",
+    saveBtn: "Lưu liên hệ",
+    backBtn: "← Quay lại",
+    saved: "✅ Đã lưu liên hệ thành công."
+  },
+  tl: {
+    title: "Mga Emergency Contact",
+    instructions: "Magdagdag ng hanggang 3 emergency contact na tatawagan sa oras ng emergency.",
+    nameLabel: "Pangalan",
+    phoneLabel: "Numero ng Telepono",
+    saveBtn: "I-save ang Mga Contact",
+    backBtn: "← Bumalik",
+    saved: "✅ Matagumpay na na-save ang mga contact."
+  },
+  ar: {
+    title: "جهات الاتصال في حالات الطوارئ",
+    instructions: "أضف ما يصل إلى 3 جهات اتصال للطوارئ ليتم إخطارهم في حالة الطوارئ.",
+    nameLabel: "الاسم",
+    phoneLabel: "رقم الهاتف",
+    saveBtn: "احفظ جهات الاتصال",
+    backBtn: "← رجوع",
+    saved: "✅ تم حفظ جهات الاتصال بنجاح."
+  }
+},
+
   map: {
     es: { backBtn: "← Volver", unknown: "Actividad desconocida", noAddress: "Sin dirección" },
     en: { backBtn: "← Back", unknown: "Unknown activity", noAddress: "No address provided" },
@@ -178,13 +235,37 @@ const translations = {
     ar: { backBtn: "← رجوع", unknown: "نشاط غير معروف", noAddress: "لا يوجد عنوان" }
   },
   shared: {
-    es: { panicAlert: "🚨 EMERGENCIA: Contactando a tus contactos de emergencia y mostrando tus derechos legales..." },
-    en: { panicAlert: "🚨 EMERGENCY: Contacting your emergency contacts and showing your legal rights..." },
-    zh: { panicAlert: "🚨 紧急情况：正在联系您的紧急联系人并显示您的法律权利..." },
-    vi: { panicAlert: "🚨 KHẨN CẤP: Đang liên hệ với các liên hệ khẩn cấp của bạn và hiển thị quyền hợp pháp của bạn..." },
-    tl: { panicAlert: "🚨 EMERGENCY: Nakikipag-ugnayan sa iyong mga emergency contact at ipinapakita ang iyong mga legal na karapatan..." },
-    ar: { panicAlert: "🚨 طارئ: يتم الاتصال بجهات الاتصال الخاصة بك وعرض حقوقك القانونية..." }
+  en: {
+    panicAlert: "🚨 EMERGENCY: Contacting your emergency contacts and showing your legal rights...",
+    configure: "⚙️ Configure Emergency Contacts",
+    trigger: "🚨 Trigger Emergency"
+  },
+  es: {
+    panicAlert: "🚨 EMERGENCIA: Contactando a tus contactos de emergencia y mostrando tus derechos legales...",
+    configure: "⚙️ Configurar Contactos de Emergencia",
+    trigger: "🚨 Activar Emergencia"
+  },
+  zh: {
+    panicAlert: "🚨 紧急情况：正在联系您的紧急联系人并显示您的法律权利...",
+    configure: "⚙️ 配置紧急联系人",
+    trigger: "🚨 启动紧急模式"
+  },
+  vi: {
+    panicAlert: "🚨 KHẨN CẤP: Đang liên hệ với các liên hệ khẩn cấp của bạn và hiển thị quyền hợp pháp của bạn...",
+    configure: "⚙️ Cấu hình liên hệ khẩn cấp",
+    trigger: "🚨 Kích hoạt khẩn cấp"
+  },
+  tl: {
+    panicAlert: "🚨 EMERGENCY: Nakikipag-ugnayan sa iyong mga emergency contact at ipinapakita ang iyong mga legal na karapatan...",
+    configure: "⚙️ I-configure ang Mga Emergency Contact",
+    trigger: "🚨 I-trigger ang Emergency"
+  },
+  ar: {
+    panicAlert: "🚨 طارئ: يتم الاتصال بجهات الاتصال الخاصة بك وعرض حقوقك القانونية...",
+    configure: "⚙️ إعداد جهات الاتصال في حالات الطوارئ",
+    trigger: "🚨 تفعيل الطوارئ"
   }
+}
 };
 
 function getLang() {
@@ -249,10 +330,69 @@ function translatePage(pageKey) {
   if (pageKey === "map" && document.getElementById("backButton")) {
     document.getElementById("backButton").textContent = t.backBtn;
   }
+
+  if (pageKey === "settings") {
+    if (document.getElementById("title")) document.getElementById("title").textContent = t.title;
+    if (document.getElementById("instructions")) document.getElementById("instructions").textContent = t.instructions;
+    if (document.getElementById("saveBtn")) document.getElementById("saveBtn").textContent = t.saveBtn;
+    if (document.getElementById("backButton")) document.getElementById("backButton").textContent = t.backBtn;
+    for (let i = 1; i <= 3; i++) {
+      if (document.getElementById(`nameLabel${i}`)) document.getElementById(`nameLabel${i}`).textContent = t.nameLabel;
+      if (document.getElementById(`phoneLabel${i}`)) document.getElementById(`phoneLabel${i}`).textContent = t.phoneLabel;
+    }
+  }
 }
 
 function triggerEmergency() {
   const lang = getLang();
-  const alertText = translations.shared[lang]?.panicAlert || translations.shared["es"].panicAlert;
-  alert(alertText);
+  const alertText = translations.shared[lang]?.panicAlert || translations.shared["en"].panicAlert;
+
+  const modal = document.createElement("div");
+  modal.style.position = "fixed";
+  modal.style.top = "0";
+  modal.style.left = "0";
+  modal.style.width = "100%";
+  modal.style.height = "100%";
+  modal.style.backgroundColor = "rgba(0,0,0,0.6)";
+  modal.style.zIndex = "9999";
+  modal.style.display = "flex";
+  modal.style.alignItems = "center";
+  modal.style.justifyContent = "center";
+
+  const box = document.createElement("div");
+  box.style.background = "white";
+  box.style.padding = "2rem";
+  box.style.borderRadius = "10px";
+  box.style.maxWidth = "400px";
+  box.style.textAlign = "center";
+  box.innerHTML = `
+    <p style="font-size: 1.2rem;">🚨 <strong>${alertText}</strong></p>
+    <div style="margin-top: 1rem;">
+      <button onclick="window.location.href='settings.html'" style="margin: 0.5rem;">⚙️ ${lang === "es" ? "Configurar Contactos de Emergencia" : "Configure Emergency Contacts"}</button>
+      <button onclick="handleEmergencyTrigger()" style="margin: 0.5rem;">🚨 ${lang === "es" ? "Activar Emergencia" : "Trigger Emergency"}</button>
+    </div>
+  `;
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.textContent = lang === "es" ? "Cancelar" : "Cancel";
+  cancelBtn.style.marginTop = "1rem";
+  cancelBtn.onclick = () => document.body.removeChild(modal);
+
+  box.appendChild(cancelBtn);
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+}
+
+function handleEmergencyTrigger() {
+  const contacts = JSON.parse(localStorage.getItem("emergencyContacts") || "[]");
+  if (contacts.length === 0) {
+    alert("⚠️ No emergency contacts found. Please set them up first.");
+    window.location.href = "settings.html";
+    return;
+  }
+
+  const message = contacts.map((c, i) => `${i + 1}. ${c.name} - ${c.phone}`).join("\n");
+  alert("🚨 Alerting the following contacts:\n\n" + message + "\n\n(This would send messages in a real system.)");
+
+  // Optionally: trigger logic like sending SMS via Twilio or Firebase Functions
 }
