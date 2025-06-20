@@ -1,0 +1,13 @@
+[build]
+  functions = "netlify/functions"
+  command = ""
+
+[dev]
+  functions = "netlify/functions"
+  port = 8888
+  publish = "."
+  envFiles = [".env"]
+
+[functions]
+  node_bundler = "esbuild"
+  directory = "netlify/functions"

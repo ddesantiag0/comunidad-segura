@@ -383,16 +383,39 @@ function triggerEmergency() {
   document.body.appendChild(modal);
 }
 
-function handleEmergencyTrigger() {
+async function handleEmergencyTrigger() {
   const contacts = JSON.parse(localStorage.getItem("emergencyContacts") || "[]");
-  if (contacts.length === 0) {
+
+  if (!contacts.length) {
     alert("⚠️ No emergency contacts found. Please set them up first.");
     window.location.href = "settings.html";
     return;
   }
 
-  const message = contacts.map((c, i) => `${i + 1}. ${c.name} - ${c.phone}`).join("\n");
-  alert("🚨 Alerting the following contacts:\n\n" + message + "\n\n(This would send messages in a real system.)");
+  const name = "Anonymous"; // You could optionally collect this from user settings
+  const phone = "0000000000"; // You could leave this static or input-driven
 
-  // Optionally: trigger logic like sending SMS via Twilio or Firebase Functions
+  try {
+    const res = await fetch("/.netlify/functions/sendAlert", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ name, phone, contacts })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("✅ Emergency alerts sent!");
+    } else {
+      alert("❌ Failed to send emergency alerts.\n" + data.error);
+    }
+  } catch (err) {
+    alert("❌ Failed to send emergency alerts.");
+    console.error(err);
+  }
 }
+
+
+

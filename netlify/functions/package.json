@@ -1,0 +1,15 @@
+{
+  "name": "functions",
+  "version": "1.0.0",
+  "main": "sendAlert.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "twilio": "^5.7.1"
+  }
+}
