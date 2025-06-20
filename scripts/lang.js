@@ -345,7 +345,8 @@ function translatePage(pageKey) {
 
 function triggerEmergency() {
   const lang = getLang();
-  const alertText = translations.shared[lang]?.panicAlert || translations.shared["en"].panicAlert;
+  const t = translations.shared[lang] || translations.shared["en"];
+  const alertText = t.panicAlert;
 
   const modal = document.createElement("div");
   modal.style.position = "fixed";
@@ -363,13 +364,22 @@ function triggerEmergency() {
   box.style.background = "white";
   box.style.padding = "2rem";
   box.style.borderRadius = "10px";
-  box.style.maxWidth = "400px";
+  box.style.maxWidth = "450px";
   box.style.textAlign = "center";
   box.innerHTML = `
     <p style="font-size: 1.2rem;">🚨 <strong>${alertText}</strong></p>
     <div style="margin-top: 1rem;">
-      <button onclick="window.location.href='settings.html'" style="margin: 0.5rem;">⚙️ ${lang === "es" ? "Configurar Contactos de Emergencia" : "Configure Emergency Contacts"}</button>
-      <button onclick="handleEmergencyTrigger()" style="margin: 0.5rem;">🚨 ${lang === "es" ? "Activar Emergencia" : "Trigger Emergency"}</button>
+      <button onclick="window.location.href='settings.html'" style="margin: 0.5rem;">⚙️ ${t.configure}</button>
+      <button onclick="handleEmergencyTrigger()" style="margin: 0.5rem;">🚨 ${t.trigger}</button>
+    </div>
+    <div style="margin-top: 1.5rem; padding: 1rem; background: #f9f9f9; border-radius: 8px; border: 1px solid #ccc; text-align: left;">
+      <h3>🛡️ ${lang === "es" ? "Tus Derechos" : "Your Rights"}</h3>
+      <p style="font-size: 0.95rem;">
+        ${lang === "es"
+          ? "Tienes derecho a guardar silencio. No tienes que dejar entrar a ICE sin una orden firmada. Pide hablar con un abogado."
+          : "You have the right to remain silent. You do not have to let ICE into your home unless they have a signed warrant. Ask to speak with a lawyer."}
+      </p>
+      <a href="docs/rights.pdf" target="_blank">📄 ${translations.index[lang]?.rights || "Know Your Rights (PDF)"}</a>
     </div>
   `;
 
@@ -392,30 +402,50 @@ async function handleEmergencyTrigger() {
     return;
   }
 
-  const name = "Anonymous"; // You could optionally collect this from user settings
-  const phone = "0000000000"; // You could leave this static or input-driven
+  const name = "Anonymous"; // Optionally customize this later * focus on structure first*
+  const locationFallback = { lat: null, lng: null };
 
-  try {
-    const res = await fetch("/.netlify/functions/sendAlert", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ name, phone, contacts })
-    });
+  const sendWithLocation = async (loc) => {
+    try {
+      const res = await fetch("/.netlify/functions/sendAlert", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name,
+          contacts,
+          location: loc
+        })
+      });
 
-    const data = await res.json();
-
-    if (res.ok) {
-      alert("✅ Emergency alerts sent!");
-    } else {
-      alert("❌ Failed to send emergency alerts.\n" + data.error);
+      const data = await res.json();
+      if (res.ok) {
+        alert("✅ Emergency alerts sent!");
+      } else {
+        alert("❌ Failed to send emergency alerts.\n" + data.error);
+      }
+    } catch (err) {
+      alert("❌ Failed to send emergency alerts.");
+      console.error(err);
     }
-  } catch (err) {
-    alert("❌ Failed to send emergency alerts.");
-    console.error(err);
+  };
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const loc = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+        sendWithLocation(loc);
+      },
+      (err) => {
+        console.warn("Geolocation error, sending without location", err);
+        sendWithLocation(locationFallback);
+      }
+    );
+  } else {
+    sendWithLocation(locationFallback);
   }
 }
-
-
-

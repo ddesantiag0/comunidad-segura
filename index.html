@@ -4,84 +4,37 @@
   <meta charset="UTF-8" />
   <title id="title">Comunidad Segura</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles/light.css" id="theme-link" />
   <link rel="stylesheet" href="styles/main.css" />
-  <script defer src="scripts/lang.js"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-      background: #fefefe;
-      color: #222;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 0.5rem;
-    }
-    p {
-      text-align: center;
-      font-size: 1.1rem;
-      max-width: 500px;
-    }
-    .btn {
-      display: block;
-      margin: 1rem auto;
-      padding: 1rem 2rem;
-      background: #ff3b3f;
-      color: white;
-      font-size: 1rem;
-      font-weight: bold;
-      text-align: center;
-      border-radius: 8px;
-      text-decoration: none;
-      max-width: 300px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transition: background 0.2s ease-in-out;
-    }
-    .btn:hover {
-      background: #d23235;
-    }
-    img {
-      max-width: 150px;
-      margin-bottom: 1rem;
-    }
-    .footer {
-      margin-top: 2rem;
-      font-size: 0.9rem;
-      color: #555;
-    }
-    .language-selector {
+    .theme-toggle-btn {
       position: fixed;
-      top: 10px;
-      right: 10px;
-    }
-    .language-selector button {
-      background: none;
-      border: none;
-      font-size: 1rem;
-      margin: 0 0.25rem;
-      cursor: pointer;
-    }
-    .emergency-button {
-      position: fixed;
-      bottom: 20px;
+      bottom: 140px;
       right: 20px;
-      background: red;
-      color: white;
-      border: none;
-      padding: 1rem;
+      background: #fff;
+      border: 2px solid #ccc;
+      font-size: 24px;
       border-radius: 50%;
-      font-size: 1.5rem;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      padding: 10px 12px;
       cursor: pointer;
-      z-index: 9999;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 999;
+    }
+
+    .theme-toggle-btn:hover {
+      background: #eee;
     }
   </style>
+
+  <!-- Scripts -->
+  <script defer src="scripts/lang.js"></script>
+  <script defer src="scripts/theme.js"></script>
+  <script defer src="scripts/alerts.js" type="module"></script>
 </head>
 <body>
+  <!-- Language Selector -->
   <div class="language-selector">
     <button data-lang="es">ES</button>
     <button data-lang="en">EN</button>
@@ -91,21 +44,64 @@
     <button data-lang="ar">العربية</button>
   </div>
 
-  <img src="assets/logo.png" alt="Comunidad Segura Logo" />
+  <!-- Theme Toggle Button -->
+  <!-- The button is created dynamically in theme.js -->
+
+  <!-- Logo -->
+  <img id="logo" src="assets/logo.png" alt="Comunidad Segura Logo" />
+
+  <!-- Heading and Description -->
   <h1 id="title">Comunidad Segura</h1>
-  <p id="description">Una plataforma para reportar actividad de ICE, ver alertas en tiempo real, y acceder a recursos legales para nuestra comunidad inmigrante en Los Ángeles.</p>
+  <p id="description">
+    A platform to report ICE activity, view real-time alerts, and access legal resources for immigrant communities in Los Angeles.
+  </p>
 
-  <a href="report.html" class="btn" id="btn-report">🚨 Reportar Actividad ICE</a>
-  <a href="map.html" class="btn" id="btn-map">📍 Ver Mapa de Reportes</a>
-  <a href="docs/rights.pdf" class="btn" id="btn-rights" target="_blank">🛡️ Conoce Tus Derechos (PDF)</a>
-  <!-- <a href="settings.html" class="btn" id="btn-settings">📱 Configurar Contactos de Emergencia</a> -->
+  <!-- Main Buttons -->
+  <div class="btn-group">
+    <a href="report.html" class="button" id="btn-report">🚨 Report ICE Activity</a>
+    <a href="map.html" class="button" id="btn-map">📍 View ICE Activity Map</a>
+    <a href="docs/rights.pdf" class="button" id="btn-rights" target="_blank">🛡️ Know Your Rights (PDF)</a>
+  </div>
 
+  <!-- Real-Time Alerts Feed -->
+  <div class="alerts-container">
+    <h2>🚨 Live ICE Alerts</h2>
+    <ul id="alerts-feed">
+      <li>Loading alerts...</li>
+    </ul>
+  </div>
+
+  <!-- Footer -->
   <footer class="footer">
     Desarrollado por David De Santiago | Comunidad Segura © 2025
   </footer>
 
+  <!-- Emergency Button -->
   <button class="emergency-button" onclick="triggerEmergency()">⚠️</button>
 
+  <!-- Firebase + Firestore Setup -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCXmbx31x0F_dBGGctS16l7aWKRtUcJ8e0M",
+      authDomain: "comunidad-segura-b16d6.firebaseapp.com",
+      projectId: "comunidad-segura-b16d6",
+      storageBucket: "comunidad-segura-b16d6.appspot.com",
+      messagingSenderId: "753593523354",
+      appId: "1:753593523354:web:8a4dbbd7afb83d04d85323",
+      measurementId: "G-1NFZJRSGBZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.firebaseApp = app;
+    window.firebaseDB = db;
+  </script>
+
+  <!-- Page Init -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       applyLanguageSwitcher();

@@ -1,0 +1,11 @@
+:root[data-theme='light'] {
+  --bg-color: #fffef9;
+  --text-color: #222;
+  --button-bg: #ef4444;
+  --button-hover: #dc2626;
+}
+
+body[data-theme='light'] {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}

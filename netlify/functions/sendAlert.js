@@ -7,20 +7,25 @@ const client = twilio(accountSid, authToken);
 
 exports.handler = async (event, context) => {
   try {
-    const { name, phone, contacts } = JSON.parse(event.body);
+    const { name, contacts, location } = JSON.parse(event.body);
 
     if (!contacts || !Array.isArray(contacts)) {
       throw new Error("Missing or invalid contacts array");
     }
 
-    const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH);
+    const locationMsg =
+      location?.lat && location?.lng
+        ? `Location: https://maps.google.com/?q=${location.lat},${location.lng}`
+        : "Location: not available.";
+
+    const message = `🚨 Emergency alert from Comunidad Segura.\n\nSent by: ${name}\n${locationMsg}\nStay safe.`;
 
     await Promise.all(
       contacts.map((c) =>
         client.messages.create({
           to: c.phone,
-          from: process.env.TWILIO_PHONE,
-          body: `🚨 Emergency alert from Comunidad Segura.\n\nSent by: ${name}\nStay safe.`
+          from: fromPhone,
+          body: message
         })
       )
     );
