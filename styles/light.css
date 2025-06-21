@@ -1,11 +1,148 @@
-:root[data-theme='light'] {
-  --bg-color: #fffef9;
-  --text-color: #222;
-  --button-bg: #ef4444;
-  --button-hover: #dc2626;
+/* === Base Styles === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-body[data-theme='light'] {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom, #fffef9, #f7f5f2);
+  color: #222;
+  line-height: 1.6;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+/* === Headings === */
+h1, h2, h3 {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+/* === Logo === */
+img#logo {
+  max-width: 140px;
+  margin: 0 auto 1.25rem;
+  display: block;
+}
+
+/* === Language Buttons === */
+.language-selector {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.language-selector button {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.language-selector button:hover {
+  background-color: #dc2626;
+  transform: scale(1.05);
+}
+
+/* === Buttons === */
+.button,
+a.btn {
+  display: inline-block;
+  padding: 0.9rem 1.6rem;
+  font-size: 1.05rem;
+  background-color: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  margin: 0.6rem;
+  text-decoration: none;
+  transition: transform 0.2s, background-color 0.2s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+}
+
+.button:hover,
+a.btn:hover {
+  background-color: #dc2626;
+  transform: scale(1.03);
+}
+
+.btn-group {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* === Emergency Button === */
+.emergency-button {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  font-size: 1.25rem;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.emergency-button:hover {
+  background-color: #dc2626;
+  transform: scale(1.05);
+}
+
+/* === Footer === */
+.footer {
+  margin-top: 3rem;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* === Mobile === */
+@media (max-width: 600px) {
+  .button,
+  a.btn {
+    width: 90%;
+    font-size: 1rem;
+  }
+
+  .language-selector {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .emergency-button {
+    padding: 0.9rem 1.1rem;
+    font-size: 1.1rem;
+  }
+
+  .btn-group {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }

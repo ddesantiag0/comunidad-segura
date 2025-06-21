@@ -5,9 +5,11 @@
   <title id="title">Comunidad Segura</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="styles/light.css" id="theme-link" />
+  <!-- Base + Theme Styles -->
   <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" id="theme-link" href="" />
+
+  <!-- Theme Toggle Button Styles -->
   <style>
     .theme-toggle-btn {
       position: fixed;
@@ -22,7 +24,6 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       z-index: 999;
     }
-
     .theme-toggle-btn:hover {
       background: #eee;
     }
@@ -33,6 +34,7 @@
   <script defer src="scripts/theme.js"></script>
   <script defer src="scripts/alerts.js" type="module"></script>
 </head>
+
 <body>
   <!-- Language Selector -->
   <div class="language-selector">
@@ -44,13 +46,10 @@
     <button data-lang="ar">العربية</button>
   </div>
 
-  <!-- Theme Toggle Button -->
-  <!-- The button is created dynamically in theme.js -->
-
   <!-- Logo -->
   <img id="logo" src="assets/logo.png" alt="Comunidad Segura Logo" />
 
-  <!-- Heading and Description -->
+  <!-- Heading -->
   <h1 id="title">Comunidad Segura</h1>
   <p id="description">
     A platform to report ICE activity, view real-time alerts, and access legal resources for immigrant communities in Los Angeles.
@@ -63,7 +62,7 @@
     <a href="docs/rights.pdf" class="button" id="btn-rights" target="_blank">🛡️ Know Your Rights (PDF)</a>
   </div>
 
-  <!-- Real-Time Alerts Feed -->
+  <!-- Live Alerts -->
   <div class="alerts-container">
     <h2>🚨 Live ICE Alerts</h2>
     <ul id="alerts-feed">
@@ -79,7 +78,7 @@
   <!-- Emergency Button -->
   <button class="emergency-button" onclick="triggerEmergency()">⚠️</button>
 
-  <!-- Firebase + Firestore Setup -->
+  <!-- Firebase Config -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -101,7 +100,7 @@
     window.firebaseDB = db;
   </script>
 
-  <!-- Page Init -->
+  <!-- Language Init -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       applyLanguageSwitcher();
