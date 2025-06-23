@@ -1,0 +1,86 @@
+/* === Dark Mode Base === */
+body, html {
+  background-color: #111;
+  color: #fff;
+}
+
+.button,
+a.btn {
+  background: #ff4444;
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.9rem 1.6rem;
+  text-decoration: none;
+  border: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.button:hover,
+a.btn:hover {
+  background-color: #dc2626;
+  transform: scale(1.03);
+}
+
+.language-selector button {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.language-selector button:hover {
+  background-color: #dc2626;
+}
+
+/* Floating theme toggle */
+.theme-toggle-btn {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  padding: 0.6rem;
+  border: none;
+  background: #333;
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255,255,255,0.2);
+  z-index: 999;
+}
+
+/* === Emergency Modal === */
+.modal,
+.emergency-modal {
+  background-color: #222 !important;
+  color: #fff !important;
+  border-color: #444 !important;
+}
+
+.modal *,
+.emergency-modal * {
+  color: #fff !important;
+}
+
+.modal button,
+.emergency-modal button {
+  background-color: #444;
+  color: #fff;
+  border: 1px solid #888;
+}
+
+.modal button:hover,
+.emergency-modal button:hover {
+  background-color: #555;
+}
+
+.modal a,
+.emergency-modal a {
+  color: #6cf;
+}
+
+.modal h3,
+.modal .icon,
+.modal .title,
+.emergency-modal h3,
+.emergency-modal .icon,
+.emergency-modal .title {
+  color: #fff;
+}

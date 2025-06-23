@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emergency Contacts | Comunidad Segura</title>
+  <script defer src="scripts/lang.js"></script>
+  <script defer src="scripts/settings.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 1em;
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 1em;
+    }
+    input {
+      width: 100%;
+      padding: 0.5em;
+      font-size: 1em;
+    }
+    button {
+      margin-top: 1em;
+      padding: 0.7em;
+      width: 100%;
+      font-size: 1em;
+    }
+    .back-btn {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: white;
+      padding: 6px 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #333;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-btn" id="backBtn">← Back</a>
+
+<h2 id="title">Emergency Contacts</h2>
+<p id="instructions">Add up to 3 emergency contacts to be notified in an emergency.</p>
+
+<form id="contactsForm">
+  <label id="nameLabel1">Name</label>
+  <input id="contactName1" type="text" />
+  <label id="phoneLabel1">Phone Number</label>
+  <input id="contactPhone1" type="text" />
+
+  <label id="nameLabel2">Name</label>
+  <input id="contactName2" type="text" />
+  <label id="phoneLabel2">Phone Number</label>
+  <input id="contactPhone2" type="text" />
+
+  <label id="nameLabel3">Name</label>
+  <input id="contactName3" type="text" />
+  <label id="phoneLabel3">Phone Number</label>
+  <input id="contactPhone3" type="text" />
+
+  <button id="saveBtn" type="submit">Save Contacts</button>
+</form>
+
+<p id="status" style="color: green; display: none; text-align: center;">Contacts saved!</p>
+
+<script src="scripts/lang.js"></script>
+<script src="scripts/settings.js"></script>
+<script>
+  applyLanguageSwitcher();
+  translatePage("settings");
+</script>
