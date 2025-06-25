@@ -1,4 +1,3 @@
-
 # Comunidad Segura - Emergency Alert System
 
 ## From Basic Web Dev to Advanced: A Journey
