@@ -21,40 +21,70 @@ const EmergencyButton = () => {
     
     if (!contacts.length) {
       toast({
-        title: "No Emergency Contacts",
-        description: "Please set up your emergency contacts first.",
+        title: "⚠️ No Emergency Contacts Set Up",
+        description: "You need to set up emergency contacts first. Redirecting you to Settings...",
+        variant: "destructive",
+      });
+      
+      // Show a more detailed alert dialog
+      setIsEmergencyDialogOpen(false);
+      
+      setTimeout(() => {
+        toast({
+          title: "📋 Set Up Emergency Contacts",
+          description: "Go to Settings to add emergency contacts with names, phone numbers, and email addresses for alerts.",
+        });
+        navigate('/settings');
+      }, 1000);
+      
+      return;
+    }
+
+    // Validate that contacts have required information
+    const validContacts = contacts.filter((c: any) => c.name && (c.phone || c.email));
+    if (validContacts.length === 0) {
+      toast({
+        title: "⚠️ Incomplete Emergency Contacts",
+        description: "Your emergency contacts are missing required information. Please update them in Settings.",
         variant: "destructive",
       });
       navigate('/settings');
       return;
     }
 
-    // Send browser notifications and emergency emails
-    const result = await sendEmergencyNotifications(contacts);
+    try {
+      // Send browser notifications and emergency emails
+      const result = await sendEmergencyNotifications(validContacts);
 
-    const contactsWithEmail = contacts.filter((c: any) => c.email).length;
-    const contactsWithPhone = result.phoneContacts.length;
-    
-    toast({
-      title: "Emergency Alert Activated!",
-      description: `${result.emailsSent}/${contactsWithEmail} emails sent. ${contactsWithPhone} phone contacts ready to call.`,
-    });
+      const contactsWithEmail = validContacts.filter((c: any) => c.email).length;
+      const contactsWithPhone = result.phoneContacts.length;
+      
+      toast({
+        title: "🚨 Emergency Alert Activated!",
+        description: `Alert sent to ${validContacts.length} contacts. ${result.emailsSent}/${contactsWithEmail} emails sent. ${contactsWithPhone} phone contacts ready to call.`,
+      });
 
-    setEmergencyContacts(contacts);
-    setShowEmergencyContacts(true);
-    setIsEmergencyDialogOpen(false);
+      setEmergencyContacts(validContacts);
+      setShowEmergencyContacts(true);
+      setIsEmergencyDialogOpen(false);
+    } catch (error) {
+      console.error('Emergency alert failed:', error);
+      toast({
+        title: "❌ Emergency Alert Failed",
+        description: "There was an issue sending your emergency alert. Please try again or call 911 directly.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <>
-      {/* Emergency Contact Display Overlay */}
       <EmergencyContactDisplay
         contacts={emergencyContacts}
         isVisible={showEmergencyContacts}
         onClose={() => setShowEmergencyContacts(false)}
       />
 
-      {/* Floating buttons positioned to not block content - bottom left corner */}
       <div className="fixed bottom-3 left-3 z-50">
         <div className="flex flex-col gap-2">
           <Button
@@ -85,6 +115,8 @@ const EmergencyButton = () => {
                   • Send email alerts to contacts with email addresses
                   <br />
                   • Display a contact screen to help you reach help quickly
+                  <br /><br />
+                  <strong>Make sure you have set up your emergency contacts in Settings first.</strong>
                   <br /><br />
                   This action cannot be undone.
                 </AlertDialogDescription>

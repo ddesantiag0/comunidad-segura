@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
+import { sendEmergencyNotifications } from '@/utils/notificationService';
 
 interface Contact {
   name: string;
@@ -16,6 +18,7 @@ interface Contact {
 
 const SettingsPage = () => {
   const { t, i18n } = useTranslation();
+  const { toast } = useToast();
   const [contacts, setContacts] = useState<Contact[]>([
     { name: '', phone: '', email: '', relationship: '' },
     { name: '', phone: '', email: '', relationship: '' },
@@ -52,9 +55,19 @@ const SettingsPage = () => {
     setContacts(updatedContacts);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const validContacts = contacts.filter(contact => contact.name.trim() && (contact.phone.trim() || contact.email?.trim()));
+    
+    if (validContacts.length === 0) {
+      toast({
+        title: "No Valid Contacts",
+        description: "Please add at least one contact with a name and phone number or email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     localStorage.setItem('emergencyContacts', JSON.stringify(validContacts));
     
     // Save other settings
@@ -65,8 +78,24 @@ const SettingsPage = () => {
     };
     localStorage.setItem('appSettings', JSON.stringify(settings));
     
+    // Test emergency alert
+    try {
+      const result = await sendEmergencyNotifications(validContacts);
+      toast({
+        title: "Test Emergency Alert Sent!",
+        description: `Alert sent to ${validContacts.length} contacts. ${result.emailsSent} emails sent successfully.`,
+      });
+    } catch (error) {
+      console.error('Emergency alert test failed:', error);
+      toast({
+        title: "Emergency Alert Test Failed",
+        description: "There was an issue sending the test alert. Please check your contacts and try again.",
+        variant: "destructive",
+      });
+    }
+    
     setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setTimeout(() => setSaved(false), 5000);
   };
 
   const handleLanguageChange = (lang: string) => {
@@ -86,8 +115,13 @@ const SettingsPage = () => {
     };
     localStorage.setItem('appSettings', JSON.stringify(settings));
     
+    toast({
+      title: "Settings Saved",
+      description: `${validContacts.length} emergency contacts saved successfully.`,
+    });
+    
     setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setTimeout(() => setSaved(false), 5000);
   };
 
   return (
@@ -111,13 +145,14 @@ const SettingsPage = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor={`name-${index}`} className="text-sm font-medium">Name</Label>
+                      <Label htmlFor={`name-${index}`} className="text-sm font-medium">Name *</Label>
                       <Input
                         id={`name-${index}`}
                         value={contact.name}
                         onChange={(e) => handleContactChange(index, 'name', e.target.value)}
                         placeholder="Full name"
                         className="w-full"
+                        required
                       />
                     </div>
                     <div className="space-y-2">
@@ -134,7 +169,7 @@ const SettingsPage = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor={`email-${index}`} className="text-sm font-medium">Email Address</Label>
+                    <Label htmlFor={`email-${index}`} className="text-sm font-medium">Email Address *</Label>
                     <Input
                       id={`email-${index}`}
                       type="email"
@@ -142,6 +177,7 @@ const SettingsPage = () => {
                       onChange={(e) => handleContactChange(index, 'email', e.target.value)}
                       placeholder="contact@example.com"
                       className="w-full"
+                      required
                     />
                     <p className="text-xs text-gray-500">Email is required for emergency notifications</p>
                   </div>
@@ -152,7 +188,7 @@ const SettingsPage = () => {
                       id={`relationship-${index}`}
                       value={contact.relationship}
                       onChange={(e) => handleContactChange(index, 'relationship', e.target.value)}
-                      placeholder="Select relationship"
+                      placeholder="Family, Friend, Colleague, etc."
                       className="w-full"
                     />
                   </div>
@@ -160,7 +196,7 @@ const SettingsPage = () => {
               ))}
 
               <Button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 py-3 text-lg">
-                Test Emergency Alert
+                Save & Test Emergency Alert
               </Button>
             </form>
           </div>
@@ -168,10 +204,13 @@ const SettingsPage = () => {
           {/* Email Configuration Notice */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h3 className="font-semibold text-blue-800 mb-2">📧 Email Notifications</h3>
-            <p className="text-sm text-blue-700">
+            <p className="text-sm text-blue-700 mb-2">
               Emergency alerts will be sent via email from <strong>comunidadsegura25@gmail.com</strong>. 
               Make sure your emergency contacts check their email regularly and add this address to their contacts 
               to prevent emails from going to spam.
+            </p>
+            <p className="text-xs text-blue-600">
+              <strong>Note:</strong> If you're not receiving test emails, check your spam folder and ensure the email addresses are correct.
             </p>
           </div>
 
