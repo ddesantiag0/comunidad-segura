@@ -8,6 +8,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from './lib/i18n';
 import { getStoredLanguage, saveLanguage } from './utils/languageStorage';
 import NotificationPermissionPrompt from './components/NotificationPermissionPrompt';
+import PrivacySettingsPrompt from './components/PrivacySettingsPrompt';
 import Index from "./pages/Index";
 import ReportPage from "./pages/ReportPage";
 import MapPage from "./pages/MapPage";
@@ -19,6 +20,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [notificationPermissionGranted, setNotificationPermissionGranted] = useState<boolean | null>(null);
+  const [privacySettingsConfigured, setPrivacySettingsConfigured] = useState<boolean | null>(null);
 
   useEffect(() => {
     // Load saved language on app start
@@ -44,6 +46,15 @@ const App = () => {
     console.log('Notification permission:', granted ? 'granted' : 'denied');
   };
 
+  const handlePrivacySettings = (settings: {
+    pushNotifications: boolean;
+    locationSharing: boolean;
+    anonymousReporting: boolean;
+  }) => {
+    setPrivacySettingsConfigured(true);
+    console.log('Privacy settings configured:', settings);
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <I18nextProvider i18n={i18n}>
@@ -51,6 +62,7 @@ const App = () => {
           <Toaster />
           <Sonner />
           <NotificationPermissionPrompt onPermissionResponse={handleNotificationPermission} />
+          <PrivacySettingsPrompt onSettingsComplete={handlePrivacySettings} />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
