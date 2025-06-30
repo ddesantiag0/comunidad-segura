@@ -41,7 +41,7 @@ const DesktopIndex = () => {
       {/* Header */}
       <div className="py-12 px-8 text-center">
         <img 
-          src="/docs/logo-image/logo.png" 
+          src="/logo-image/logo.png" 
           alt="Comunidad Segura Logo" 
           className="w-20 h-20 mx-auto mb-6"
         />
@@ -189,7 +189,7 @@ const DesktopIndex = () => {
         <div className="px-8 max-w-7xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-4">
             <img 
-              src="/docs/logo-image/logo.png" 
+              src="/logo-image/logo.png" 
               alt="Comunidad Segura Logo" 
               className="h-8 w-8"
             />
