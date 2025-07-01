@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { getAddressSuggestions } from '@/utils/geocoding';
+import { getCaliforniaAddressSuggestions } from '@/data/californiaAddresses';
 
 interface AddressInputProps {
   value: string;
@@ -21,14 +22,31 @@ const AddressInput: React.FC<AddressInputProps> = ({ value, onChange, placeholde
       clearTimeout(timeoutRef.current);
     }
 
-    if (value.length >= 3) {
+    if (value.length >= 2) {
       setIsLoading(true);
       timeoutRef.current = setTimeout(async () => {
-        const results = await getAddressSuggestions(value);
-        setSuggestions(results);
-        setShowSuggestions(true);
-        setIsLoading(false);
-      }, 300);
+        try {
+          // First try California-specific suggestions for faster response
+          const californiaSuggestions = getCaliforniaAddressSuggestions(value);
+          
+          if (californiaSuggestions.length > 0) {
+            setSuggestions(californiaSuggestions);
+            setShowSuggestions(true);
+            setIsLoading(false);
+          } else {
+            // Fallback to general suggestions
+            const results = await getAddressSuggestions(value);
+            setSuggestions(results);
+            setShowSuggestions(true);
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error('Error getting suggestions:', error);
+          setSuggestions([]);
+          setShowSuggestions(false);
+          setIsLoading(false);
+        }
+      }, 150); // Reduced timeout for better UX
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
@@ -52,6 +70,13 @@ const AddressInput: React.FC<AddressInputProps> = ({ value, onChange, placeholde
     setTimeout(() => setShowSuggestions(false), 200);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setShowSuggestions(false);
+      inputRef.current?.blur();
+    }
+  };
+
   return (
     <div className="relative">
       <Input
@@ -60,12 +85,14 @@ const AddressInput: React.FC<AddressInputProps> = ({ value, onChange, placeholde
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={handleInputBlur}
+        onKeyDown={handleKeyDown}
         onFocus={() => {
           if (suggestions.length > 0) {
             setShowSuggestions(true);
           }
         }}
-        placeholder={placeholder}
+        placeholder={placeholder || "Enter address in California..."}
+        className="pr-10"
       />
       
       {isLoading && (
@@ -75,17 +102,25 @@ const AddressInput: React.FC<AddressInputProps> = ({ value, onChange, placeholde
       )}
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
           {suggestions.map((suggestion, index) => (
             <button
               key={index}
               type="button"
-              className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none text-sm"
+              className="w-full px-4 py-2 text-left hover:bg-gray-100 focus:bg-gray-100 focus:outline-none text-sm border-b border-gray-100 last:border-b-0 transition-colors"
               onClick={() => handleSuggestionClick(suggestion)}
             >
-              {suggestion}
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400">📍</span>
+                <span className="truncate">{suggestion}</span>
+              </div>
             </button>
           ))}
+          {suggestions.length === 10 && (
+            <div className="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-t">
+              Keep typing for more specific results
+            </div>
+          )}
         </div>
       )}
     </div>
