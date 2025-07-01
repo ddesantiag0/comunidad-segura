@@ -51,7 +51,7 @@ const Index = () => {
         {/* Header */}
         <div className="p-4 text-center">
           <img 
-            src="/logo-image/logo.png" 
+            src= {`${import.meta.env.BASE_URL}logo-image/logo.png`}  
             alt="Comunidad Segura Logo" 
             className="w-12 h-12 mx-auto mb-2"
           />
@@ -194,7 +194,7 @@ const Index = () => {
           <div className="px-4 py-2 lg:px-8 lg:max-w-6xl lg:mx-auto">
             <div className="flex items-center justify-center gap-2 mb-1 lg:mb-3">
               <img 
-                src="/logo-image/logo.png" 
+                src={`${import.meta.env.BASE_URL}logo-image/logo.png`} 
                 alt="Comunidad Segura Logo" 
                 className="h-4 w-4 lg:h-6 lg:w-6"
               />
